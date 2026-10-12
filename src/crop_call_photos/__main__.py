@@ -1,4 +1,7 @@
-"""A script for cropping screenshots taken during Discord video calls"""
+"""
+An automation utility for image preprocessing. It leverages OpenCV-Python and NumPy to isolate active video call windows
+and remove surrounding black borders, seamlessly preserving metadata with ExifTool.
+"""
 
 from argparse import ArgumentParser
 from pathlib import Path
