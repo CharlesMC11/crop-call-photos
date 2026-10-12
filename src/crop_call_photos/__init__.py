@@ -1,5 +1,3 @@
-__author__ = "Charles Mesa Cayobit"
-
 import subprocess
 import tarfile
 from collections.abc import Iterator
@@ -23,7 +21,9 @@ _NEW_IDENTIFIER = "cropped_"
 IMAGE_EXTENSIONS = {"heif", "jpeg", "jpg", "png", "tif", "tiff"}
 
 DEFAULT_SCREENSHOT_EXT = "png"
-FILENAME_PATTERN = "[1-2][0-9][0-1][0-9][0-3][0-9]_[0-2][0-9][0-5][0-9][0-5][0-9]"
+FILENAME_PATTERN = (
+    "2[0-1][1-2][0-9][0-1][0-9][0-3][0-9]-[0-2][0-9][0-5][0-9][0-5][0-9]"
+)
 
 
 def crop(image: Path, new_affix: str = _NEW_IDENTIFIER) -> Path:
@@ -73,7 +73,7 @@ def clean_up(
     exiftool_args: list[str | Path] = [
         "exiftool",
         "-tagsFromFile",
-        f"%-13f.{file_extension}",
+        f"%-15f.{file_extension.upper()}",
         "-all<all",
         "-MaxAvailWidth<ImageWidth",
         "-MaxAvailHeight<ImageHeight",
@@ -88,7 +88,9 @@ def clean_up(
     exiftool_args.extend(images.values())
     subprocess.run(exiftool_args, cwd=directory)
 
-    with tarfile.open(directory / "originals.tar.gz", "w:gz", compresslevel=1) as tar:
+    with tarfile.open(
+        directory / "originals.tar.gz", "w:gz", compresslevel=1
+    ) as tar:
         for f in images:
             tar.add(f, arcname=f.name)
 
@@ -104,7 +106,9 @@ def main(
     if not directory.is_dir():
         raise ValueError(f"Not a directory: {directory}")
 
-    files: Iterator[Path] = directory.glob(f"{filename_pattern}.{file_extension}")
+    files: Iterator[Path] = directory.glob(
+        f"{filename_pattern}.{file_extension}"
+    )
 
     # Map of original images to their cropped version
     processed_successfully: dict[Path, Path] = {}
@@ -118,6 +122,6 @@ def main(
             raise
 
     if not processed_successfully:
-        RuntimeError("No files processed")
+        raise RuntimeError("No files processed")
 
     clean_up(directory, processed_successfully, file_extension)
