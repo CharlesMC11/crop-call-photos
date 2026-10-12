@@ -1,4 +1,4 @@
-# crop_discord_call_photos
+# crop-call-photos
 
 An automation utility for image preprocessing. It leverages OpenCV-Python and NumPy to isolate active video call windows
 and remove surrounding black borders, seamlessly preserving metadata with ExifTool.

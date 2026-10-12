@@ -1,5 +1,5 @@
 [project]
-name = "crop-discord-call-photos"
+name = "crop-call-photos"
 version = "0.1.1"
 description = "A script for cropping screenshots taken during Discord video calls"
 readme = "README.md"
