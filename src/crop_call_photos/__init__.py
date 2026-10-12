@@ -34,7 +34,7 @@ def main(
         file_extension: str = DEFAULT_SCREENSHOT_EXT,
 ) -> None:
     if not directory.is_dir():
-        raise ValueError(f"Not a directory: {directory}")
+        raise ValueError(f"Not a directory: '{directory}'.")
 
     files: Iterator[Path] = directory.glob(
         f"{filename_pattern}.{file_extension}"
@@ -52,7 +52,7 @@ def main(
             raise
 
     if not processed_successfully:
-        raise RuntimeError("No files processed")
+        raise RuntimeError("No files processed.")
 
     clean_up(directory, processed_successfully, file_extension)
 
@@ -68,7 +68,7 @@ def crop(image: Path, new_affix: str = _NEW_IDENTIFIER) -> Path:
 
     img = cv.imread(f"{image}")
     if img is None:
-        raise ValueError("Empty image")
+        raise ValueError(f"Empty image: '{image.name}'.")
 
     img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     mask = cv.threshold(img_gray, 0.001, 255, cv.THRESH_BINARY)[1]
