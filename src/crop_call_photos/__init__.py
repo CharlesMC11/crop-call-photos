@@ -21,24 +21,21 @@ _NEW_IDENTIFIER = "cropped_"
 IMAGE_EXTENSIONS = {"heif", "jpeg", "jpg", "png", "tif", "tiff"}
 
 DEFAULT_SCREENSHOT_EXT = "png"
-FILENAME_PATTERN = (
-    "2[0-1][1-2][0-9][0-1][0-9][0-3][0-9]-[0-2][0-9][0-5][0-9][0-5][0-9][+-][0-1][0-9]00"
-)
+FILENAME_PATTERN = "2[0-1][1-2][0-9][0-1][0-9][0-3][0-9]-[0-2][0-9][0-5][0-9][0-5][0-9][+-][0-1][0-9]00"
 
 
 # Public functions
 
+
 def main(
-        directory: Path,
-        filename_pattern: str = FILENAME_PATTERN,
-        file_extension: str = DEFAULT_SCREENSHOT_EXT,
+    directory: Path,
+    filename_pattern: str = FILENAME_PATTERN,
+    file_extension: str = DEFAULT_SCREENSHOT_EXT,
 ) -> None:
     if not directory.is_dir():
         raise ValueError(f"Not a directory: '{directory}'.")
 
-    files: Iterator[Path] = directory.glob(
-        f"{filename_pattern}.{file_extension}"
-    )
+    files: Iterator[Path] = directory.glob(f"{filename_pattern}.{file_extension}")
 
     # Map of original images to their cropped version
     processed_successfully: dict[Path, Path] = {}
@@ -81,7 +78,7 @@ def crop(image: Path, new_affix: str = _NEW_IDENTIFIER) -> Path:
             contours_video.extend(c)
 
     x, y, w, h = cv.boundingRect(np.array(contours_video))
-    img_cropped = img[y: y + h, x: x + w]
+    img_cropped = img[y : y + h, x : x + w]
 
     new_image = image.with_stem(f"{new_affix}{image.stem}")
     cv.imwrite(f"{new_image}", img_cropped)
@@ -90,9 +87,9 @@ def crop(image: Path, new_affix: str = _NEW_IDENTIFIER) -> Path:
 
 
 def clean_up(
-        directory: Path,
-        images: dict[Path, Path],
-        file_extension: str = DEFAULT_SCREENSHOT_EXT,
+    directory: Path,
+    images: dict[Path, Path],
+    file_extension: str = DEFAULT_SCREENSHOT_EXT,
 ) -> None:
     """Copy the original images’ metadata onto the cropped ones, then archive the originals.
 
@@ -117,9 +114,7 @@ def clean_up(
     exiftool_args.extend(images.values())
     subprocess.run(exiftool_args, cwd=directory)
 
-    with tarfile.open(
-            directory / "originals.tar.gz", "w:gz", compresslevel=1
-    ) as tar:
+    with tarfile.open(directory / "originals.tar.gz", "w:gz", compresslevel=1) as tar:
         for f in images:
             tar.add(f, arcname=f.name)
 
