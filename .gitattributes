@@ -1,6 +1,3 @@
-*     text=auto
+*       text=auto
 
-*.md  text diff=markdown
-.git* text
-
-*.py  text eol=lf diff=python
+uv.lock generated
